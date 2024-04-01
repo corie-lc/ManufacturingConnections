@@ -4,7 +4,7 @@ import javafx.collections.FXCollections
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.ComboBox
-import javafx.scene.layout.VBox
+import javafx.scene.layout.GridPane
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import java.io.BufferedReader
@@ -115,7 +115,7 @@ class Systems {
         }
     }
 
-    fun runSystemChecks(primaryLayout: VBox, stage: Stage): Boolean{
+    fun runSystemChecks(primaryLayout: GridPane, stage: Stage): Boolean{
         val configFilePath = "src/config.properties"
         val propsInput = FileInputStream(configFilePath)
 

@@ -3,7 +3,7 @@ package org.corieleclair.travellers
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.layout.VBox
+import javafx.scene.layout.GridPane
 import javafx.stage.Stage
 import java.io.FileInputStream
 import java.util.*
@@ -14,8 +14,8 @@ class HelloApplication : Application() {
     override fun start(stage: Stage) {
         stage.title = "OpenManufacturing"
 
-        val mainVBox = VBox()
-        val scene = Scene(mainVBox, 600.0, 600.0)
+        val mainLayout = GridPane()
+        val scene = Scene(mainLayout, 600.0, 600.0)
 
 
         val buttonMoveJobs = Button("Move Jobs")
@@ -23,6 +23,13 @@ class HelloApplication : Application() {
         val buttonCurrentJobs = Button("Current Jobs")
         val buttonUpdateDirectory = Button("Change Directory (ONLY IF YOU ARE SURE")
         val buttonUpdateConfig = Button("Update Configuration(Admin Use Only)")
+
+        buttonMoveJobs.setPrefSize(300.0,100.0)
+        buttonCreateJob.setPrefSize(300.0,100.0)
+        buttonCurrentJobs.setPrefSize(300.0,100.0)
+        buttonUpdateDirectory.setPrefSize(300.0,100.0)
+        buttonUpdateConfig.setPrefSize(300.0,100.0)
+
 
 
 
@@ -38,6 +45,10 @@ class HelloApplication : Application() {
             UpdateConfig().openConfigWindow()
         }
 
+        buttonCurrentJobs.setOnAction {
+            AllCurrentJobs().allCurrentJobsWindow()
+        }
+
         buttonUpdateDirectory.setOnAction {
             val configFilePath = "src/config.properties"
             val propsInput = FileInputStream(configFilePath)
@@ -49,19 +60,20 @@ class HelloApplication : Application() {
 
 
 
-        mainVBox.children.add(buttonMoveJobs)
-        mainVBox.children.add(buttonCurrentJobs)
-        mainVBox.children.add(buttonCreateJob)
-        mainVBox.children.add(buttonUpdateConfig)
+        mainLayout.add(buttonMoveJobs, 0, 0)
+        mainLayout.add(buttonCurrentJobs, 0, 1)
+        mainLayout.add(buttonCreateJob, 1, 0)
+        mainLayout.add(buttonUpdateConfig, 1, 1)
 
-        mainVBox.children.add(buttonUpdateDirectory)
-
-
+        mainLayout.add(buttonUpdateDirectory, 0, 2)
 
 
-        Systems().runSystemChecks(mainVBox, stage)
 
 
+        Systems().runSystemChecks(mainLayout, stage)
+
+
+        stage.isResizable = false
         stage.scene = scene
         stage.show()
     }

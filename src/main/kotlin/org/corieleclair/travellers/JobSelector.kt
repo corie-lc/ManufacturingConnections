@@ -18,6 +18,12 @@ import kotlin.io.path.Path
 
 
 class JobSelector {
+    private val stage = Stage()
+    private val moveJobLayout = GridPane()
+    private val jobInformation = GridPane()
+    private val scrollPane = ScrollPane(jobInformation)
+    private val root = BorderPane(scrollPane)
+    private var showing = false
 
     private fun getJobInfo(jobNumber: String) : List<String> {
         val configFilePath = "src/config.properties"
@@ -41,7 +47,11 @@ class JobSelector {
         }
     }
 
-    fun loadJobIntoWindow(jobNumberInput: String, jobInformation: GridPane){
+    fun loadJobIntoWindow(jobNumberInput: String){
+        if(!showing){
+            moveJobsWindow()
+        }
+
         jobInformation.children.clear()
 
         val jobInfo = getJobInfo(jobNumberInput)
@@ -97,7 +107,7 @@ class JobSelector {
                 }
 
                 CreateJob().createCSVInFolder(tempJobInfo)
-                loadJobIntoWindow(jobNumberInput, jobInformation)
+                loadJobIntoWindow(jobNumberInput)
             }
 
 
@@ -114,28 +124,23 @@ class JobSelector {
 
 
 
-    fun moveJobsWindow() {
-        val stage = Stage()
+    fun moveJobsWindow(): GridPane {
+
+
 
         stage.isResizable = false
 
-        val moveJobLayout = GridPane()
 
         moveJobLayout.padding = Insets(0.0, 0.0, 0.0, 20.0) //margins around the whole grid
-
-
-        val jobInformation = GridPane()
         jobInformation.hgap = 40.0
         jobInformation.vgap = 5.0
 
 
-        val scrollPane = ScrollPane(jobInformation)
         scrollPane.minWidth = 500.0
 
         scrollPane.isFitToHeight = true
         scrollPane.isFitToWidth = true
 
-        val root = BorderPane(scrollPane)
         root.minWidth = 600.0
 
         val jobNumberInput = TextField("Job Number")
@@ -149,7 +154,7 @@ class JobSelector {
 
 
         buttonSearchForJob.setOnAction {
-            loadJobIntoWindow(jobNumberInput.text, jobInformation)
+            loadJobIntoWindow(jobNumberInput.text)
         }
 
 
@@ -157,6 +162,9 @@ class JobSelector {
         stage.title = "Move Jobs"
         stage.scene = Scene(moveJobLayout, 650.0, 650.0)
         stage.show()
+        showing = true
+
+        return jobInformation
     }
 
 }
