@@ -15,7 +15,7 @@ import java.util.*
 class CreateJob {
 
 
-    private fun createCSVInFolder(stuff: MutableList<List<String>>){
+    fun createCSVInFolder(stuff: MutableList<String>){
 
         var stuffParsed = ""
 
@@ -24,11 +24,11 @@ class CreateJob {
 
 
         for(item in stuff){
-            val tempItem = item[0] + ":" + item[1] + ";\n"
+            val tempItem = item + ";\n"
             stuffParsed += tempItem
         }
 
-        stuffParsed += "date_time: " +  SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()) + ";\n"
+        //stuffParsed += "date_time: " +  SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()) + ";\n"
 
 
 
@@ -41,12 +41,22 @@ class CreateJob {
 
             print(stuff[0][1])
 
-            val myWriter = FileWriter(prop.getProperty("MainDirectory") + "/jobs/" + stuff[0][1] + ".txt")
+            val myWriter = FileWriter(prop.getProperty("MainDirectory") + "/jobs/" + stuff[0].split(":")[1] + ".txt")
             myWriter.write(stuffParsed)
             myWriter.close()
             println("Successfully wrote to the file.")
+            val a = Alert(Alert.AlertType.INFORMATION)
+            a.title = "Job Has Been Added To Que"
+            a.contentText = "Job Has Been Added To Que"
+            // show the dialog
+            a.showAndWait();
         } catch (e: IOException) {
             println("An error occurred.")
+            val a = Alert(Alert.AlertType.ERROR)
+            a.title = "There was an error. Please add to the github issues."
+            a.contentText = e.toString()
+            // show the dialog
+            a.showAndWait();
             e.printStackTrace()
         }
 
@@ -88,7 +98,7 @@ class CreateJob {
 
         val buttonCreateJob = Button("Create Job")
 
-        var allNewJobInfo = mutableListOf<List<String>>()
+        var allNewJobInfo = mutableListOf<String>()
 
         buttonCreateJob.setOnAction {
             for (item in jobInformationVbox.children){
@@ -107,25 +117,12 @@ class CreateJob {
                     tempTextField.text = ""
                 }
 
-                allNewJobInfo += mutableListOf(tempLabel.text ,text)
+                allNewJobInfo += tempLabel.text + ":" + text
 
             }
 
 
-            try{
-                createCSVInFolder(allNewJobInfo)
-                val a = Alert(Alert.AlertType.INFORMATION)
-                a.title = "Job Has Been Added To Que"
-                a.contentText = "Job Has Been Added To Que"
-                // show the dialog
-                a.showAndWait();
-            } catch (exception: Exception) {
-                val a = Alert(Alert.AlertType.ERROR)
-                a.title = "There was an error. Please add to the github issues."
-                a.contentText = exception.toString()
-                // show the dialog
-                a.showAndWait();
-            }
+            createCSVInFolder(allNewJobInfo)
 
 
         }

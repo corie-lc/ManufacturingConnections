@@ -56,7 +56,7 @@ class Systems {
         return list
     }
 
-    fun getJobLocations() : List<String> {
+    private fun getJobLocations() : List<String> {
         val configFilePath = "src/config.properties"
         val propsInput = FileInputStream(configFilePath)
 

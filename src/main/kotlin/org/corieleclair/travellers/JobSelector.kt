@@ -8,6 +8,7 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextField
 import javafx.scene.layout.*
 import javafx.stage.Stage
+import org.controlsfx.control.spreadsheet.Grid
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
@@ -37,6 +38,74 @@ class JobSelector {
             return allInfo
         } else{
             return listOf("null")
+        }
+    }
+
+    fun loadJobIntoWindow(jobNumberInput: String, jobInformation: GridPane){
+        jobInformation.children.clear()
+
+        val jobInfo = getJobInfo(jobNumberInput)
+        var jobLocation = ""
+
+
+        var whereX = 0;
+        var whereY = 0
+
+        if (jobInfo[0] != "null"){
+            jobInfo.removeLast()
+
+
+            for (item in jobInfo) {
+                if (item.split(":")[0].replace("\n", "") == "job location"){
+                    jobLocation = item.split(":")[1].toString()
+                }
+                val tempLabel = Label(item.split(":")[0].replace("\n", "") + "  :  " + item.split(":")[1].toString())
+                tempLabel.isUnderline = true
+
+                jobInformation.add(tempLabel, whereX, whereY)
+
+                whereY += 1
+
+                if (whereX == 0){
+                    whereX = 1;
+                } else{
+                    whereX = 0
+                }
+            }
+
+            // add comments
+
+            val commentOne = TextField("")
+            val buttonUpdateJob = Button("UpdateJob ->")
+            val jobLocationDropdown = Systems().getLocationDropDown(jobLocation)
+
+
+
+
+            jobInformation.add(Label("Comment"), 0, whereY, 2, 1)
+
+            jobInformation.add(commentOne, 0, whereY + 1, 2, 1)
+            jobInformation.add(jobLocationDropdown, 0, whereY + 2, 2, 1)
+            jobInformation.add(buttonUpdateJob, 0, whereY + 3, 2, 1)
+
+            buttonUpdateJob.setOnAction {
+                val tempJobInfo = jobInfo.toMutableList()
+                tempJobInfo[1] = "job location :" + jobLocationDropdown.value.toString()
+
+                if(commentOne.text != ""){
+                    tempJobInfo.add(tempJobInfo.count(), "comment1: " + commentOne.text)
+                }
+
+                CreateJob().createCSVInFolder(tempJobInfo)
+                loadJobIntoWindow(jobNumberInput, jobInformation)
+            }
+
+
+
+
+
+        } else {
+            jobInformation.children.add(Label("No Job Found or No Job Data Found"))
         }
     }
 
@@ -80,54 +149,7 @@ class JobSelector {
 
 
         buttonSearchForJob.setOnAction {
-            jobInformation.children.clear()
-
-            val jobInfo = getJobInfo(jobNumberInput.text)
-            var jobLocation = ""
-
-
-            var whereX = 0;
-            var whereY = 0
-
-            if (jobInfo[0] != "null"){
-                jobInfo.removeLast()
-
-
-                for (item in jobInfo) {
-                    if (item.split(":")[0].replace("\n", "") == "job location"){
-                        jobLocation = item.split(":")[1].toString()
-                    }
-                    val tempLabel = Label(item.split(":")[0].replace("\n", "") + "  :  " + item.split(":")[1].toString())
-                    tempLabel.isUnderline = true
-
-                    jobInformation.add(tempLabel, whereX, whereY)
-
-                    whereY += 1
-
-                    if (whereX == 0){
-                        whereX = 1;
-                    } else{
-                        whereX = 0
-                    }
-                }
-
-                // add comments
-
-                val commentOne = TextField("")
-                val buttonUpdateJob = Button("UpdateJob ->")
-                jobInformation.add(Label("Comment"), 0, whereY, 2, 1)
-
-                jobInformation.add(commentOne, 0, whereY + 1, 2, 1)
-                jobInformation.add(Systems().getLocationDropDown(jobLocation), 0, whereY + 2, 2, 1)
-                jobInformation.add(buttonUpdateJob, 0, whereY + 3, 2, 1)
-
-
-
-
-
-            } else {
-                jobInformation.children.add(Label("No Job Found or No Job Data Found"))
-            }
+            loadJobIntoWindow(jobNumberInput.text, jobInformation)
         }
 
 
