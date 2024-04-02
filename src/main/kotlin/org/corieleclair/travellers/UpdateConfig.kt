@@ -15,6 +15,15 @@ import java.util.*
 
 
 class UpdateConfig {
+    private val stage = Stage()
+    private val mainLayout = GridPane()
+    private val jobPropertyLayout = VBox()
+    private val jobLocationLayout = VBox()
+    private val scrollPane = ScrollPane(mainLayout)
+    private val root = BorderPane(scrollPane)
+
+
+    private val scene =  Scene(root)
 
     private fun getJobLocations(): List<String> {
         val listOfLocations = Systems().getProperty("job_locations").split(",")
@@ -72,21 +81,17 @@ class UpdateConfig {
     fun openConfigWindow (){
         // update to add username and password protection
 
-        val stage = Stage()
-        val mainLayout = GridPane()
-        val jobPropertyLayout = VBox()
-        val jobLocationLayout = VBox()
+
         val buttonAddJobProperty = Button("Add Job Property")
         val buttonAddJobLocation = Button("Add Job Location")
         val buttonPushUpdate = Button("Apply")
-        val scrollPane = ScrollPane(mainLayout)
-        val root = BorderPane(scrollPane)
 
+        mainLayout.children.clear()
         mainLayout.add(jobPropertyLayout, 0, 1)
         mainLayout.add(jobLocationLayout, 1, 1)
         mainLayout.add(buttonPushUpdate, 0, 3)
-        mainLayout.add(buttonAddJobProperty, 1, 0)
-        mainLayout.add(buttonAddJobLocation, 2, 0)
+        mainLayout.add(buttonAddJobProperty, 0, 0)
+        mainLayout.add(buttonAddJobLocation, 1, 0)
 
 
 
@@ -124,7 +129,9 @@ class UpdateConfig {
         stage.height = 600.0
         stage.width = 600.0
         stage.isResizable = false
-        stage.scene = Scene(root)
-        stage.show()
+        if(!stage.isShowing){
+            stage.scene = scene
+            stage.show()
+        }
     }
 }

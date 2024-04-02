@@ -15,6 +15,13 @@ import java.util.*
 class CreateJob {
 
 
+    private val parentBox = VBox()
+    private val jobInformationVbox = VBox()
+    private val jobAttributes = Systems().getNewJobAttributes()
+    private val scene = Scene(parentBox, 400.0, 400.0)
+    private val stage = Stage()
+
+
     fun createCSVInFolder(stuff: MutableList<String>){
 
         var stuffParsed = ""
@@ -66,16 +73,9 @@ class CreateJob {
 
     fun createNewJob() {
 
-        val stage = Stage()
 
-        val parentBox = VBox()
-        val jobInformationVbox = VBox()
-
+        parentBox.children.clear()
         parentBox.children.add(jobInformationVbox)
-
-        stage.scene = Scene(parentBox, 400.0, 400.0)
-
-        val jobAttributes = Systems().getNewJobAttributes()
 
         for (item in jobAttributes){
             if(item == "job location"){
@@ -129,6 +129,9 @@ class CreateJob {
 
 
         parentBox.children.add(buttonCreateJob)
-        stage.show()
+        if(!stage.isShowing){
+            stage.scene = scene
+            stage.show()
+        }
     }
 }

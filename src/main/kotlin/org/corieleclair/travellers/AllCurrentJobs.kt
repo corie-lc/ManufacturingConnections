@@ -21,6 +21,7 @@ class AllCurrentJobs {
     private val allJobsLayout = VBox()
     private val scrollPane = ScrollPane(allJobsLayout)
     private val root = BorderPane(scrollPane)
+    private val scene = Scene(root)
 
     enum class Filter {
         JOB_LOCATION,
@@ -105,7 +106,7 @@ class AllCurrentJobs {
         }
 
         if(!stage.isShowing){
-            stage.scene = Scene(root)
+            stage.scene = scene
             stage.show()
         }
     }

@@ -16,6 +16,7 @@ class JobSelector {
     private val scrollPane = ScrollPane(jobInformation)
     private val root = BorderPane(scrollPane)
     private var showing = false
+    val scene = Scene(moveJobLayout, 650.0, 650.0)
 
 
 
@@ -97,10 +98,13 @@ class JobSelector {
 
 
     fun moveJobsWindow(): GridPane {
+        // resetting
+        moveJobLayout.children.clear()
 
 
 
         stage.isResizable = false
+
 
 
         moveJobLayout.padding = Insets(0.0, 0.0, 0.0, 20.0) //margins around the whole grid
@@ -132,9 +136,10 @@ class JobSelector {
 
 
         stage.title = "Move Jobs"
-        stage.scene = Scene(moveJobLayout, 650.0, 650.0)
-        stage.show()
-        showing = true
+        if(!stage.isShowing){
+            stage.scene = scene
+            stage.show()
+        }
 
         return jobInformation
     }
