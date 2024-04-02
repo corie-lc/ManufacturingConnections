@@ -6,6 +6,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.io.File
@@ -16,6 +17,15 @@ import kotlin.io.path.nameWithoutExtension
 
 
 class AllCurrentJobs {
+    private val stage = Stage()
+    private val allJobsLayout = VBox()
+    private val scrollPane = ScrollPane(allJobsLayout)
+    private val root = BorderPane(scrollPane)
+
+    enum class Filter {
+        JOB_LOCATION,
+        NONE
+    }
     private fun getAllFilesInJobFolder(): MutableList<String> {
         val directoryPath = Systems().getProperty("MainDirectory") + "/jobs/"
         val listOfFiles = mutableListOf<String>()
@@ -36,36 +46,67 @@ class AllCurrentJobs {
 
         return listOfFiles
     }
-    fun allCurrentJobsWindow(){
+    fun allCurrentJobsWindow(filter : Filter =  Filter.NONE, filterString: String = "NONE"){
         val jobSelector = JobSelector()
         val allFiles = getAllFilesInJobFolder()
 
-        val stage = Stage()
 
         stage.isResizable = false
 
-        val allJobsLayout = VBox()
-
-
-        val scrollPane = ScrollPane(allJobsLayout)
-        scrollPane.minWidth = 500.0
+        scrollPane.minWidth = 600.0
 
         scrollPane.isFitToHeight = true
         scrollPane.isFitToWidth = true
 
-        val root = BorderPane(scrollPane)
         root.minWidth = 600.0
+        root.minHeight = 550.0
 
         for(item in allFiles){
             val tempButton = Button(item)
-            tempButton.setOnAction {
-                jobSelector.loadJobIntoWindow(item)
-            }
+            val tempJobInfo = Systems().getJobInfo(item)
+            val tempHBox = HBox()
 
-            allJobsLayout.children.add(tempButton)
+            println("----------------------------------------------------------------------")
+            println(tempJobInfo)
+            val tempLocationButton = Button(tempJobInfo[1].split(":")[1])
+
+            if(filter == Filter.JOB_LOCATION){
+                if (tempJobInfo[1].split(":")[0] == filterString){
+                    tempButton.minWidth = 350.0
+                    tempButton.setOnAction {
+                        jobSelector.loadJobIntoWindow(item)
+                    }
+
+                    tempHBox.children.add(tempButton)
+                    tempHBox.children.add(tempLocationButton)
+
+                    allJobsLayout.children.add(tempButton)
+                } else{
+                    continue
+                }
+            } else {
+                println("HERE")
+                tempButton.minWidth = 350.0
+
+                tempButton.setOnAction {
+                    jobSelector.loadJobIntoWindow(item)
+                }
+
+                tempLocationButton.setOnAction {
+                    stage.close()
+                    AllCurrentJobs().allCurrentJobsWindow(Filter.JOB_LOCATION, tempJobInfo[1].split(":")[0])
+                }
+
+                tempHBox.children.add(tempButton)
+                tempHBox.children.add(tempLocationButton)
+
+                allJobsLayout.children.add(tempHBox)
+            }
         }
 
-        stage.scene = Scene(root)
-        stage.show()
+        if(!stage.isShowing){
+            stage.scene = Scene(root)
+            stage.show()
+        }
     }
 }

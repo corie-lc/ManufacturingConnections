@@ -18,13 +18,32 @@ import kotlin.system.exitProcess
 
 
 class Systems {
+    fun getJobInfo(jobNumber: String) : List<String> {
+        val configFilePath = "src/config.properties"
+        val propsInput = FileInputStream(configFilePath)
+
+        val prop: Properties = Properties()
+        prop.load(propsInput)
+
+        return if(Files.exists(Path(prop.getProperty("MainDirectory") + "/jobs/" + jobNumber + ".txt"))){
+            val bufferedReader: BufferedReader = File(prop.getProperty("MainDirectory") + "/jobs/" + jobNumber + ".txt").bufferedReader()
+            val inputString = bufferedReader.use { it.readText() }
+
+            // convert the file into an array
+
+            val allInfo = inputString.split(";")
+
+            allInfo
+        } else{
+            listOf("null")
+        }
+    }
 
     private fun isConfigFileSetupCorrect() : Boolean{
         val attributes = getNewJobAttributes()
 
 
         if (attributes.isNotEmpty()){
-            println(attributes[0])
             return attributes[0] == "job number"
         }
 
@@ -72,7 +91,6 @@ class Systems {
     fun getLocationDropDown(jobLocation : String) : ComboBox<String> {
         val locationBox = ComboBox<String>()
         val data = FXCollections.observableArrayList(getJobLocations())
-        println(jobLocation)
 
         locationBox.items = data
         locationBox.value = jobLocation

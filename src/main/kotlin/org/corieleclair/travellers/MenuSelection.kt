@@ -30,23 +30,30 @@ class HelloApplication : Application() {
         buttonUpdateDirectory.setPrefSize(300.0,100.0)
         buttonUpdateConfig.setPrefSize(300.0,100.0)
 
+        val jobSelectorClass = JobSelector()
+        val createJobClass = CreateJob()
+        val updateConfigClass = UpdateConfig()
+        val allCurrentJobsClass = AllCurrentJobs()
+
+
+
 
 
 
         buttonMoveJobs.setOnAction {
-            JobSelector().moveJobsWindow()
+            jobSelectorClass.moveJobsWindow()
         }
 
         buttonCreateJob.setOnAction {
-            CreateJob().createNewJob()
+            createJobClass.createNewJob()
         }
 
         buttonUpdateConfig.setOnAction {
-            UpdateConfig().openConfigWindow()
+            updateConfigClass.openConfigWindow()
         }
 
         buttonCurrentJobs.setOnAction {
-            AllCurrentJobs().allCurrentJobsWindow()
+            allCurrentJobsClass.allCurrentJobsWindow()
         }
 
         buttonUpdateDirectory.setOnAction {

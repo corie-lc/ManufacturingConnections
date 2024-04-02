@@ -8,14 +8,6 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextField
 import javafx.scene.layout.*
 import javafx.stage.Stage
-import org.controlsfx.control.spreadsheet.Grid
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileInputStream
-import java.nio.file.Files
-import java.util.*
-import kotlin.io.path.Path
-
 
 class JobSelector {
     private val stage = Stage()
@@ -25,27 +17,7 @@ class JobSelector {
     private val root = BorderPane(scrollPane)
     private var showing = false
 
-    private fun getJobInfo(jobNumber: String) : List<String> {
-        val configFilePath = "src/config.properties"
-        val propsInput = FileInputStream(configFilePath)
 
-        val prop: Properties = Properties()
-        prop.load(propsInput)
-
-        if(Files.exists(Path(prop.getProperty("MainDirectory") + "/jobs/" + jobNumber + ".txt"))){
-            val bufferedReader: BufferedReader = File(prop.getProperty("MainDirectory") + "/jobs/" + jobNumber + ".txt").bufferedReader()
-            val inputString = bufferedReader.use { it.readText() }
-
-            // convert the file into an array
-
-            val allInfo = inputString.split(";")
-            print(allInfo)
-
-            return allInfo
-        } else{
-            return listOf("null")
-        }
-    }
 
     fun loadJobIntoWindow(jobNumberInput: String){
         if(!showing){
@@ -54,7 +26,7 @@ class JobSelector {
 
         jobInformation.children.clear()
 
-        val jobInfo = getJobInfo(jobNumberInput)
+        val jobInfo = Systems().getJobInfo(jobNumberInput)
         var jobLocation = ""
 
 
